@@ -6,7 +6,8 @@
       <div 
         class="card" 
         v-for="(c, i) in getCard" 
-        :key="i">
+        :key="i"
+        @dblclick="removeCard(i)">
         <div class="front" :style="{backgroundImage : c.image}"></div>
         <div class="back" :style="{backgroundImage : c.backImage}">
           <span>{{c.name}}</span>
@@ -29,7 +30,6 @@
         <button @click="add()">add</button>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -41,18 +41,6 @@ export default {
       name: "",
       isModal: false,
       card: [
-        {
-          name: "dog",
-          image: "https://www.medicalnewstoday.com/content/images/articles/322/322868/golden-retriever-puppy.jpg"
-        },
-        {
-          name: "2",
-          image: "https://www.medicalnewstoday.com/content/images/articles/322/322868/golden-retriever-puppy.jpg"
-        },
-        {
-          name: "3",
-          image: "https://www.medicalnewstoday.com/content/images/articles/322/322868/golden-retriever-puppy.jpg"
-        },
       ]
     }
   },
@@ -75,7 +63,27 @@ export default {
 
       this.card.push({name : this.name, image : this.url});
       this.isModal = false;
+      this.setCookie();
+      
+    },
+    setCookie(){
+      let j = encodeURIComponent(JSON.stringify(this.card));
+      document.cookie = "data="+j+"; max-age=" + (60 * 60 * 24 * 31);
+      
+    },
+    getCookie(){
+      // decodeURIComponent
+      let j = decodeURIComponent(document.cookie.split(";")[0].split("=")[1]);
+      this.card = JSON.parse(j);
+    },
+    removeCard(i){
+      this.card.splice(i, 1);
+      this.setCookie();
     }
+  },
+ 
+  mounted(){
+    this.getCookie();
   }
 }
 </script>
